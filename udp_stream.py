@@ -13,5 +13,4 @@ class UDPStream(NetworkStream):
             return "dns"
         if NBTDatagram in self.pkt:
             return "netbios"
-        print repr(self.pkt)
         return "unknown"

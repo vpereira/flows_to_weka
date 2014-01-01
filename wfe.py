@@ -13,7 +13,6 @@ import argparse
 #do a chi square test to see if the number of flags are related with a protocol
 #ex:
 #http://hsc.uwe.ac.uk/dataanalysis/quantinfasschi.asp
-#packets=rdpcap("tcp_or_udp.pcap")
 
 
 def create_forward_flow_key(pkt):
@@ -44,8 +43,6 @@ args = parser.parse_args()
 pcap_file = args.i
 output_type = args.t
 
-packets=rdpcap(pcap_file)
-
 flows = {}
 
 attrs = ['src','sport','dst','dport','proto','push_flag_ratio','average_len','average_payload_len','pkt_count','flow_average_inter_arrival_time','kolmogorov','shannon']
@@ -54,7 +51,10 @@ attrs = ['src','sport','dst','dport','proto','push_flag_ratio','average_len','av
 #packets = [ pkt for pkt in packets if IP in pkt for p in pkt if TCP or UDP in p ]
 
 #here we are sure ALL PACKETS ARE TCP
-for pkt in packets:
+
+myreader = PcapReader(pcap_file)
+#use iterator
+for pkt in myreader:
      if IP not in pkt: continue
      if pkt.proto not in (6,17): continue
      flow_tuple = reverse_flow_tuple = key_to_search = None
@@ -86,5 +86,4 @@ else:
     print ','.join(attrs)
 
 for flow in flows.values():
-    #print flow.proto
     print "%s,%s,%s,%s,%s,%s,%.3f,%s,%s,%s,%s,%s,%s"%(flow.application(),flow.src,flow.sport,flow.dst,flow.dport,flow.proto,flow.push_flag_ratio(),flow.avrg_len(),flow.avrg_payload_len(),flow.pkt_count,flow.avrg_inter_arrival_time(),flow.kolmogorov(),flow.shannon())
