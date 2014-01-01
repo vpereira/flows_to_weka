@@ -46,11 +46,8 @@ output_type = args.t
 flows = {}
 
 attrs = ['src','sport','dst','dport','proto','push_flag_ratio','average_len','average_payload_len','pkt_count','flow_average_inter_arrival_time','kolmogorov','shannon']
-#reduce it to TCP
-#TODO check if its possible to pack it again in the original class, that we are able to call .conversations() on this array
-#packets = [ pkt for pkt in packets if IP in pkt for p in pkt if TCP or UDP in p ]
 
-#here we are sure ALL PACKETS ARE TCP
+#TODO check if its possible to pack it again in the original class, that we are able to call .conversations() on this array
 
 myreader = PcapReader(pcap_file)
 #use iterator
