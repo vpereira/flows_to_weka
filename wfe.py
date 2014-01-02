@@ -70,10 +70,10 @@ for pkt in myreader:
 
 if output_type == "arff":
     print "@relation protocol_detection"
-    print "@attribute protocol-name"
+    print "@attribute protocol-name string"
 
     for attr in attrs:
-        if attr in ['pkt_count','average_len','flow_average_inter_arrival_time','push_flag_ratio','average_payload_len','kolmogorov','shannon']:
+        if attr in ['proto','pkt_count','average_len','flow_average_inter_arrival_time','push_flag_ratio','average_payload_len','kolmogorov','shannon']:
             print "@attribute",attr,"numeric"
         else:
             print "@attribute",attr,"string"

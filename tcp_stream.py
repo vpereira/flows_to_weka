@@ -2,6 +2,7 @@ from scapy.all import *
 from network_stream import NetworkStream
 from numpy import *
 from entropy import kolmogorov, shannon
+from application_detection import ApplicationDetection
 
 #We are assuming:
 #1) Its an IP packet
@@ -30,30 +31,8 @@ class TCPStream(NetworkStream):
         self.pkt = pkt
     
     def application(self):
-       #expand it to a new python module
-        if self.payload[0:4] in ["GET ", "POST", "HEAD"]:
-            return "http"
-        elif self.payload[0:4] in ["220 ","220-","USER"]:
-            return "ftp"
-        elif self.payload[0:4] in ["220 ", "220-", "HELO", "EHLO",".\n\n"]:
-            if self.sport != 21 and self.dport != 21:
-                return "smtp"
-        elif self.payload[0:4] in ["SSH-"]:
-            return "ssh"
-        elif self.payload[0:4] in ["* OK"]:
-            return "imap"
-        elif self.payload[0:4] in ["USER","CAPA","AUTH","+OK "]:
-            if self.sport not in (21,194,6667) and self.dport not in (21,194,6667):
-                return "pop3"
-        elif self.payload[0:4].encode('hex')[0:2] == 'ff':
-            hex_payload = self.payload[0:4].encode('hex')
-            if hex_payload[2:4] in ('fb','fc','fd','fe'):
-                #default command
-                next_cmd = 3
-                if len(self.payload) > 3 and self.payload[0:4].encode('hex')[0+next_cmd*2:2+next_cmd*2] == 'ff':
-                    return "telnet"
-        if len(self.payload) >= 4:
-            print "unknown",self.sport,self.dport,self.payload[0:4].encode('hex'),repr(self.payload[0:4])
-
-        return "unknown"
-
+       appd = ApplicationDetection()
+       app = appd.detect(self.payload)
+       if app:
+           return app
+       return "unknown"
