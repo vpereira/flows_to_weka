@@ -23,7 +23,6 @@ def create_flow_keys(pkt):
     return create_forward_flow_key(pkt),create_reverse_flow_key(pkt)
 
 def lookup_stream(key,reverse_key):
-
     if key in flows.keys():
         return key,flows[key]
     elif reverse_key in flows.keys():
@@ -83,4 +82,5 @@ else:
     print ','.join(attrs)
 
 for flow in flows.values():
+    if flow.avrg_payload_len() == 0: continue #without payload, no
     print "%s,%s,%s,%s,%s,%s,%.3f,%s,%s,%s,%s,%s,%s"%(flow.application(),flow.src,flow.sport,flow.dst,flow.dport,flow.proto,flow.push_flag_ratio(),flow.avrg_len(),flow.avrg_payload_len(),flow.pkt_count,flow.avrg_inter_arrival_time(),flow.kolmogorov(),flow.shannon())

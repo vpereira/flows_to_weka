@@ -23,16 +23,12 @@ class TCPStream(NetworkStream):
         return len([ f for f in self.flags if 'P' in f ]) / float(len(self.flags))
 
     def add(self,pkt):
-        self.pkt_count += 1
-        self.len += pkt.len
-        self.inter_arrival_times.append(pkt.time - self.time)
+        super(TCPStream,self).add(pkt)
         self.flags.append(pkt.sprintf("%TCP.flags%"))
-        self.payload += str(pkt[TCP].payload)
-        self.pkt = pkt
-    
+
     def application(self):
        appd = ApplicationDetection()
-       app = appd.detect(self.payload)
+       app = appd.detect(self)
        if app:
            return app
        return "unknown"

@@ -10,13 +10,14 @@ class NetworkStream(object):
         self.dport = pkt.dport        
         self.time = pkt.time
         self.proto = pkt.proto
+        self.payload = ""
         self.inter_arrival_times = [0]
         self.pkt_count = 1
         self.len = pkt.len
         if UDP in pkt:
-            self.payload = str(pkt[UDP].payload)
+            if pkt[UDP].payload: self.payload = str(pkt[UDP].payload)
         elif TCP in pkt:
-            self.payload = str(pkt[TCP].payload)
+            if pkt[TCP].payload: self.payload = str(pkt[TCP].payload)
         self.pkt = pkt
 
     def avrg_len(self):
@@ -45,10 +46,12 @@ class NetworkStream(object):
         self.pkt_count += 1
         self.len += pkt.len
         self.inter_arrival_times.append(pkt.time - self.time)
+  
         if UDP in pkt:
-            self.payload += str(pkt[UDP].payload)
+            if pkt[UDP].payload: self.payload += str(pkt[UDP].payload)
         elif TCP in pkt:
-            self.payload += str(pkt[TCP].payload)
+            if pkt[TCP].payload: self.payload += str(pkt[TCP].payload)
+  
         self.pkt = pkt
     
     def application(self):
